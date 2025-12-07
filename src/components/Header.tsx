@@ -1,15 +1,21 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingCart, MapPin, Heart, Menu, X, Globe } from 'lucide-react';
+import { Search, ShoppingCart, MapPin, Heart, Menu, X, Globe, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, Language } from '@/contexts/LanguageContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [cartCount] = useState(0);
-  const { language, setLanguage, t } = useLanguage();
+  const [cartCount] = useState(2);
+  const { language, setLanguage, t, languageNames } = useLanguage();
 
   const navLinks = [
     { href: '/', label: t('nav.home') },
@@ -19,26 +25,42 @@ export default function Header() {
     { href: '/about', label: t('nav.about') },
   ];
 
+  const languages: Language[] = ['en', 'nl', 'fr', 'de'];
+
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
       {/* Top bar */}
       <div className="bg-primary text-primary-foreground py-2">
         <div className="container flex items-center justify-between text-sm">
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
+            <Link to="/stores" className="flex items-center gap-1 hover:opacity-80 transition-opacity">
               <MapPin className="h-4 w-4" />
               70+ Stores
-            </span>
+            </Link>
             <span className="hidden sm:block">{t('hero.freeShipping')}</span>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setLanguage(language === 'en' ? 'nl' : 'en')}
-              className="flex items-center gap-1 hover:opacity-80 transition-opacity"
-            >
-              <Globe className="h-4 w-4" />
-              <span className="uppercase font-medium">{language}</span>
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1 hover:opacity-80 transition-opacity">
+                  <Globe className="h-4 w-4" />
+                  <span className="uppercase font-medium">{language}</span>
+                  <ChevronDown className="h-3 w-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-background border border-border shadow-lg z-50">
+                {languages.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang}
+                    onClick={() => setLanguage(lang)}
+                    className={`cursor-pointer ${language === lang ? 'bg-primary/10 text-primary' : ''}`}
+                  >
+                    <span className="uppercase font-medium mr-2">{lang}</span>
+                    <span className="text-muted-foreground">{languageNames[lang]}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
@@ -67,17 +89,21 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="hidden sm:flex">
-              <Heart className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-              {cartCount > 0 && (
-                <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                  {cartCount}
-                </Badge>
-              )}
-            </Button>
+            <Link to="/wishlist">
+              <Button variant="ghost" size="icon" className="hidden sm:flex">
+                <Heart className="h-5 w-5" />
+              </Button>
+            </Link>
+            <Link to="/cart">
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                {cartCount > 0 && (
+                  <Badge variant="default" className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                    {cartCount}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="icon"

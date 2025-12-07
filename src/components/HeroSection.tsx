@@ -1,11 +1,15 @@
+import { useState } from 'react';
 import { Sparkles, Play, Truck, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
+import ARVideoModal from '@/components/ARVideoModal';
+import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-party.jpg';
 
 export default function HeroSection() {
   const { t } = useLanguage();
+  const [isARModalOpen, setIsARModalOpen] = useState(false);
 
   return (
     <section className="relative overflow-hidden">
@@ -49,10 +53,17 @@ export default function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-wrap gap-4 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-            <Button variant="hero" size="xl">
-              {t('hero.cta')}
-            </Button>
-            <Button variant="glass" size="xl" className="text-background border-background/30 hover:bg-background/10">
+            <Link to="/products">
+              <Button variant="hero" size="xl">
+                {t('hero.cta')}
+              </Button>
+            </Link>
+            <Button 
+              variant="glass" 
+              size="xl" 
+              className="text-background border-background/30 hover:bg-background/10"
+              onClick={() => setIsARModalOpen(true)}
+            >
               <Play className="h-5 w-5 mr-2" />
               {t('hero.ar')}
             </Button>
@@ -60,18 +71,18 @@ export default function HeroSection() {
 
           {/* Trust indicators */}
           <div className="flex flex-wrap items-center gap-6 mt-10 pt-10 border-t border-background/20 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-            <div className="flex items-center gap-2 text-background/80">
+            <Link to="/stores" className="flex items-center gap-2 text-background/80 hover:text-primary transition-colors">
               <Truck className="h-5 w-5 text-primary" />
               <span className="text-sm">Click & Collect</span>
-            </div>
-            <div className="flex items-center gap-2 text-background/80">
+            </Link>
+            <a href="https://www.trustpilot.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-background/80 hover:text-primary transition-colors">
               <span className="text-2xl">⭐</span>
               <span className="text-sm">4.5/5 Trustpilot</span>
-            </div>
-            <div className="flex items-center gap-2 text-background/80">
+            </a>
+            <Link to="/products" className="flex items-center gap-2 text-background/80 hover:text-primary transition-colors">
               <span className="text-2xl">🎉</span>
               <span className="text-sm">20,000+ Products</span>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
@@ -79,6 +90,9 @@ export default function HeroSection() {
       {/* Decorative elements */}
       <div className="absolute top-10 right-10 w-32 h-32 bg-primary/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-10 right-1/3 w-24 h-24 bg-festive/30 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
+
+      {/* AR Video Modal */}
+      <ARVideoModal isOpen={isARModalOpen} onClose={() => setIsARModalOpen(false)} />
     </section>
   );
 }
